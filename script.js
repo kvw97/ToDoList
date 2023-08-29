@@ -3,43 +3,62 @@ const taskInput = document.getElementById("taskinput");
 const addButton = document.getElementById("addButton");
 const taskList = document.getElementById("taskList");
 
+const tasks = JSON.parse(localStorage.getItem("tasks")) **
+
 // Add an event listener to the "Add" button
 addButton.addEventListener("click", addTask);
 
+tasks.forEach(renderTask)
 // Function to add a new task
 function addTask() {
     // Get the text entered in the input field
-    const taskText = taskInput.value;
+    const taskText = taskInput.value.trim();
 
     // Check if the input is not empty (trim removes extra spaces)
     if (taskText.trim() !== "") {
-
-        // Create a new list item element for the task
-        const taskItem = document.createElement("li");
-        
-        // Set the task's text content to the input text
-        taskItem.textContent = taskText;
-        
-        // Append the task item to the task list
-        taskList.appendChild(taskItem);
-
-        // Clear the input field and focus on it
+        const task = {text: textTask, completed: false };
+        tasks.push(task);
+        saveTasks();
+        renderTask(task);
         taskInput.value = "";
-        taskInput.focus();
-        
-        // Add a click event listener to the task item to remove it when clicked
-        taskItem.addEventListener("click", removeTask);
     }
 }
 
-// Function to remove a task
-function removeTask(event) {
-    // Get the clicked task item
-    const taskItem = event.target;
+function renderTask(task) {
+    const taskItem = document.createElement("li");
+    taskItem.textContext = task.text;
+    taskItem.classList.toggle("completed", task.Completed);
 
-    // Remove the clicked task item from its parent (the task list)
-    taskItem.parentNode.removeChild(taskItem);
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = task.Completed;
+    checkbox.addEventListener("change", () =>{
+        task.Completed = checkbox.checked;
+        taskItem.classList.toggle("completed", task.Completed);
+        saveTasks();
+    });
+
+    const deleteButton = document.createElement("button");
+    deleteButton.textContent = "Delete";
+    deleteButton.addEventListener("click",() => {
+        const taskIndex = tasks.indexOf(task);
+        if (taskIndex > -1) {
+            tasks.splice(taskIndex, 1);
+            saveTasks();
+            taskItem.remove();
+        }
+    });
+
+    taskItem.appendChild(checkbox);
+    taskItem.appendChild(deleteButton);
+    taskList.appendChild(taskItem);
 }
+
+function saveTasks() {
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+
 
 // Add an event listener to the input field to handle pressing the Enter key
 taskInput.addEventListener("keyup", function(event) {
