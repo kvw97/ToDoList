@@ -1,22 +1,21 @@
 // Get references to the relevant HTML elements
-const taskInput = document.getElementById("taskinput");
+const taskInput = document.getElementById("taskInput");
 const addButton = document.getElementById("addButton");
 const taskList = document.getElementById("taskList");
 
-const tasks = JSON.parse(localStorage.getItem("tasks")) **
+const tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
 // Add an event listener to the "Add" button
 addButton.addEventListener("click", addTask);
 
-tasks.forEach(renderTask)
+tasks.forEach(renderTask);
 // Function to add a new task
 function addTask() {
-    // Get the text entered in the input field
     const taskText = taskInput.value.trim();
 
-    // Check if the input is not empty (trim removes extra spaces)
-    if (taskText.trim() !== "") {
-        const task = {text: textTask, completed: false };
+    
+    if (taskText !== "") {
+        const task = {text: taskText, completed: false };
         tasks.push(task);
         saveTasks();
         renderTask(task);
@@ -26,21 +25,21 @@ function addTask() {
 
 function renderTask(task) {
     const taskItem = document.createElement("li");
-    taskItem.textContext = task.text;
-    taskItem.classList.toggle("completed", task.Completed);
+    taskItem.textContent = task.text;
+    taskItem.classList.toggle("completed", task.completed);
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
-    checkbox.checked = task.Completed;
-    checkbox.addEventListener("change", () =>{
-        task.Completed = checkbox.checked;
-        taskItem.classList.toggle("completed", task.Completed);
+    checkbox.checked = task.completed;
+    checkbox.addEventListener("change", () => {
+        task.completed = checkbox.checked;
+        taskItem.classList.toggle("completed", task.completed);
         saveTasks();
     });
 
     const deleteButton = document.createElement("button");
     deleteButton.textContent = "Delete";
-    deleteButton.addEventListener("click",() => {
+    deleteButton.addEventListener("click", () => {
         const taskIndex = tasks.indexOf(task);
         if (taskIndex > -1) {
             tasks.splice(taskIndex, 1);
